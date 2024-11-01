@@ -1,0 +1,47 @@
+#![allow(missing_docs)]
+
+use alloy::primitives::{
+    address, b128, b64, bytes, fixed_bytes, Address, Bytes, FixedBytes,
+};
+use eyre::Result;
+
+fn main() -> Result<()> {
+    let a = bytes!("0123abcd");
+    assert_eq!(a, Bytes::from(&[0x01,0x23,0xab,0xcd]));
+    assert_eq!(a.len(), 4);
+
+    let b = address!("f39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+    assert_eq!(
+        b,
+        Address::from(&[
+            0xf3, 0x9f, 0xd6, 0xe5, 0x1a, 0xad, 0x88, 0xf6, 0xf4, 0xce, 0x6a, 0xb8, 0x82, 0x72,
+            0x79, 0xcf, 0xff, 0xb9, 0x22, 0x66
+        ])
+    );
+
+    let c = b64!("0102030405060708");
+    assert_eq!(c, FixedBytes::from(&[0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]));
+    assert_eq!(c.len(), 8);
+
+    let d = b128!("0102030405060708090a0b0c0d0e0f10");
+    assert_eq!(
+        d,
+        FixedBytes::from(&[
+            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+            0x0f, 0x10,
+        ])
+    );
+    assert_eq!(d.len(), 16);
+
+    let e = fixed_bytes!("0102030405060708090a0b0c0d0e0f1011121314");
+    assert_eq!(
+        e,
+        FixedBytes::from(&[
+            0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+            0x0f, 0x10, 0x11, 0x12, 0x13, 0x14,
+        ]),
+    );
+    assert_eq!(e.len(), 20);
+
+    Ok(())
+}
