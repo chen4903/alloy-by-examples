@@ -1,4 +1,4 @@
-//! Example of how to get the gas price in USD using the Chainlink ETH/USD feed.
+#![allow(missing_docs)]
 
 use alloy::{
     network::TransactionBuilder,
@@ -24,25 +24,19 @@ sol!(
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Spin up a forked Anvil node.
-    // Ensure `anvil` is available in $PATH.
     let rpc_url = "https://eth.merkle.io";
     let provider = ProviderBuilder::new().on_anvil_with_config(|anvil| anvil.fork(rpc_url));
 
-    // Create a call to get the latest answer from the Chainlink ETH/USD feed.
     let call = latestAnswerCall {}.abi_encode();
     let input = Bytes::from(call);
 
-    // Call the Chainlink ETH/USD feed contract.
     let tx = TransactionRequest::default().with_to(ETH_USD_FEED).with_input(input);
 
     let response = provider.call(&tx).await?;
     let result = U256::from_str(&response.to_string())?;
 
-    // Get the gas price of the network.
     let wei_per_gas = provider.get_gas_price().await?;
 
-    // Convert the gas price to Gwei and USD.
     let gwei = format_units(wei_per_gas, "gwei")?.parse::<f64>()?;
     let usd = get_usd_value(wei_per_gas, result)?;
 
@@ -55,9 +49,7 @@ async fn main() -> Result<()> {
 fn get_usd_value(amount: u128, price_usd: U256) -> Result<f64> {
     let base = U256::from(10).pow(U256::from(ETH_DECIMALS));
     let value = U256::from(amount) * price_usd / base;
-    // Chainlink ETH/USD预言机返回的价格数据使用了8位小数
-    // Chainlink预言机的latestAnswer函数：Chainlink的预言机返回的是整数形式的价格数据，但这些数据通常包含一定的精度。
-    // 例如，返回值300000000000表示ETH价格为3000.00000000美元，8个小数位用于表示精确到美元的百万分之一。
+
     let formatted = format_units(value, ETH_USD_FEED_DECIMALS)?.parse::<f64>()?;
 
     Ok(formatted)

@@ -56,6 +56,9 @@ async fn main() -> Result<()> {
     let tx_envelope = tx.build(&wallet).await?;
 
     // Encode the transaction using EIP-2718 encoding.
+    // EIP-2718 是以太坊改进提案，正式标题为“Typed Transaction Envelope”，即“类型化交易封装”。
+    // 它的主要目的是为以太坊交易引入一个通用的、灵活的交易格式，使得不同类型的交易可以并存，
+    // 以便以后引入新的交易格式而不会影响现有的交易类型。
     let tx_encoded = tx_envelope.encoded_2718();
 
     // Send the raw transaction. The transaction is sent to the Flashbots relay and, if valid, will
